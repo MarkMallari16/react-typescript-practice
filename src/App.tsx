@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Button from './component/Button';
 
 interface Lists {
   id: number,
@@ -9,6 +10,7 @@ interface Lists {
 const App: React.FC = () => {
   //title input
   const [title, setTitle] = useState<string>("");
+  //new title input for edit
   const [newTitle, setNewTitle] = useState<string>("");
 
   //storing list
@@ -97,6 +99,8 @@ const App: React.FC = () => {
           ))
         }
       </div>
+
+      <Button title='Pindot' disabled={true} />
     </>
   )
 }
