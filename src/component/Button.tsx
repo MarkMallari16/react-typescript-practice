@@ -5,7 +5,7 @@ interface MyButtonProps {
 }
 const Button = ({ title, disabled }: MyButtonProps) => {
     return (
-        <button disabled={disabled}>{title}</button>
+        <button disabled={disabled} >{title}</button>
     )
 }
 
