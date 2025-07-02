@@ -3,8 +3,7 @@ import Button from './component/Button';
 
 interface Lists {
   id: number,
-  title: string,
-  isEdit: boolean
+  title: string
 }
 type Status = | { status: "idle" }
   | { status: "loading" }
@@ -13,7 +12,7 @@ type Status = | { status: "idle" }
 
 
 const App: React.FC = () => {
-  //title input
+  const [editingId, setEditingId] = useState<number | null>(null);  //title input
   const [title, setTitle] = useState<string>("");
   //new title input for edit
   const [newTitle, setNewTitle] = useState<string>("");
@@ -40,7 +39,6 @@ const App: React.FC = () => {
     const newList: Lists = {
       id: Date.now(),
       title: title,
-      isEdit: false
     };
 
     setLists((prevLists) => [...prevLists, newList]);
@@ -58,6 +56,7 @@ const App: React.FC = () => {
 
     if (editingItem) {
       setNewTitle(editingItem.title);
+      setEditingId(id);
     }
 
     setLists((prevLists) => prevLists.map((list) => (
@@ -66,17 +65,25 @@ const App: React.FC = () => {
   }
 
   //save
-  const saveList = (id: number) => {
+  const saveList = () => {
     setLists((prevlists) => prevlists.map((list) => (
-      list.id === id ? { ...list, title: newTitle, isEdit: false } : list
+      list.id === editingId ? { ...list, title: newTitle, isEdit: false } : list
     )))
+
+    setEditingId(null);
+    setNewTitle("");
   }
 
   //cancel
   const cancelEdit = (id: number) => {
+    if (editingId === null) return;
+
     setLists((prevLists) => prevLists.map((list) => (
       list.id === id ? { ...list, isEdit: false } : list
     )))
+
+    setEditingId(null);
+    setNewTitle("");
   }
 
   //toggling button
@@ -88,6 +95,8 @@ const App: React.FC = () => {
   const handleStatus = () => {
     setStatus({ status: "success" });
   }
+
+  console.log(lists)
   return (
 
     <div className='min-h-screen grid place-items-center '>
@@ -95,7 +104,7 @@ const App: React.FC = () => {
         <h1 className='text-2xl font-bold'>Todo List Application</h1>
         <div>
           <label htmlFor="title">Title</label>
-          <input value={title} onChange={(e) => handleTitle(e)} id='title' type="text" className='block border p-2 w-full mb-2 rounded-md' />
+          <input value={title} onChange={handleTitle} id='title' type="text" className='block border p-2 w-full mb-2 rounded-md' />
         </div>
         <button onClick={addList} className='w-full bg-blue-500 text-white font-bold p-2 rounded-md'>Add List</button>
 
@@ -103,16 +112,16 @@ const App: React.FC = () => {
           {
             lists.map((list) => (
               <div key={list.id}>
-                {list.isEdit ?
+                {list.id === editingId ?
                   <div className='flex justify-between items-center p-5 ring-1 ring-inset ring-gray-300 mt-2 rounded-lg'>
                     <div>
                       <label htmlFor="newTitle">Enter New Title</label>
                       <input value={newTitle} onChange={(e) => setNewTitle(e.target.value)}
                         id='title' type="text" placeholder='Enter title' className='border w-96 p-2 rounded-md block mt-1' />
                     </div>
-                    <div className='flex gap-2'>
+                    <div className='flex items-center gap-2'>
                       <button onClick={() => cancelEdit(list.id)} className='bg-red-500 px-4 py-2 rounded-md text-white font-bold'>Cancel</button>
-                      <button onClick={() => saveList(list.id)} className='bg-blue-500 px-4 py-2 rounded-md text-white font-bold'>Save</button>
+                      <button onClick={saveList} className='bg-blue-500 px-4 py-2 rounded-md text-white font-bold'>Save</button>
 
                     </div>
                   </div>
